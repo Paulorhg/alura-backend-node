@@ -1,3 +1,4 @@
+import { Autor } from "../models/Autor.js"
 import Livro from "../models/Livro.js"
 
 class LivroController {
@@ -16,14 +17,18 @@ class LivroController {
             const livro = await Livro.findById(id)
             res.json(livro)
         } catch(err) {
-            res.status(500).json({ message: `Erro ao listar livros: ${err.message}` })
+            res.status(500).json({ message: `Livro não encontrado: ${err.message}` })
         }
     }
 
     static async cadastrarLivro(req, res) {
+        const novoLivro = req.body
+        
         try{
-            const novoLivro = await Livro.create(req.body)
-            res.json({ message: "Livro cadastrado com sucesso", livro: novoLivro })
+            const autorEncontrado = await Autor.findById(novoLivro.autor)
+            const livroCompleto = { ...novoLivro, autor: {...autorEncontrado._doc} }
+            const livroCriado = await Livro.create(livroCompleto)
+            res.json({ message: "Livro cadastrado com sucesso", livro: livroCriado })
         } catch(err) {
             res.status(500).json({ message: `Erro ao cadastrar livro: ${err.message}` })
         }
@@ -41,8 +46,21 @@ class LivroController {
 
     static async excluirLivro(req, res) {
         try{
+            const { id } = req.params
+            await Livro.findByIdAndDelete(id)
+            res.json({message: "Livro excluido com sucesso"})
         } catch(err) {
             res.status(500).json({ message: `Erro ao excluir livro: ${err.message}` })
+        }
+    }
+
+    static async buscarLivrosPorEditora(req, res) {
+        const editora = req.query.editora
+        try{
+            const livros = await Livro.find({ editora })
+            res.json(livros)
+        } catch(err) {
+            res.status(500).json({ message: `Erro ao buscar livros por editora: ${err.message}` })
         }
     }
 }
