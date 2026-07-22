@@ -1,11 +1,11 @@
-import express from "express"
-import livroRoutes from "./livrosRoutes.js"
-import autorRoutes from "./autoresRoutes.js"
+import express from "express";
+import livroRoutes from "./livrosRoutes.js";
+import autorRoutes from "./autoresRoutes.js";
 
 const routes = (app) => {
-    app.route("/").get((req, res) => res.status(200).send("Curso de Node.js"))
+  app.route("/").get((req, res) => res.status(200).send("Curso de Node.js"));
 
-    app.use(express.json(), livroRoutes, autorRoutes)
-}
+  app.use(express.json(), livroRoutes, autorRoutes);
+};
 
-export default routes
+export default routes;
